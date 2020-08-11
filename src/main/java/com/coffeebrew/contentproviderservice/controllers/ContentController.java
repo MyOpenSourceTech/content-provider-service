@@ -22,7 +22,7 @@ public class ContentController {
     @Autowired
     private ContentService contentService;
 
-    @PostMapping("/uploadFile")
+    @PostMapping("/upload")
     public ResponseEntity<Content> uploadFile(@RequestParam("file") MultipartFile file) {
         String fileName = fileStorageService.storeFile(file);
 
