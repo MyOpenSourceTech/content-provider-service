@@ -26,6 +26,14 @@ public class Content {
                 Objects.equals(url, content.url);
     }
 
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(id, url);

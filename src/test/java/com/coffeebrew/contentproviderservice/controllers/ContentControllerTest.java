@@ -1,5 +1,6 @@
 package com.coffeebrew.contentproviderservice.controllers;
 
+import com.coffeebrew.contentproviderservice.builders.ResourceBuilder;
 import com.coffeebrew.contentproviderservice.models.Content;
 import com.coffeebrew.contentproviderservice.services.ContentService;
 import com.coffeebrew.contentproviderservice.services.FileStorageService;
@@ -9,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
@@ -77,6 +80,32 @@ class ContentControllerTest {
         when(contentService.getById(id)).thenReturn(Optional.empty());
 
         ResponseEntity<Content> responseEntity = target.getFileMeta(id);
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void shouldDownloadFileById() {
+        String id = random.nextObject(String.class);
+        Content content = random.nextObject(Content.class);
+        Resource resource = new ResourceBuilder().initiate().build();
+
+        when(contentService.getById(id)).thenReturn(Optional.of(content));
+        when(fileStorageService.loadFileAsResource(content.getUrl())).thenReturn(resource);
+
+        ResponseEntity<Resource> responseEntity = target.downloadFile(id);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(resource, responseEntity.getBody());
+    }
+
+    @Test
+    public void shouldReturnNotFoundWhileContentNotFound() {
+        String id = random.nextObject(String.class);
+
+        when(contentService.getById(id)).thenReturn(Optional.empty());
+
+        ResponseEntity<Resource> responseEntity = target.downloadFile(id);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
