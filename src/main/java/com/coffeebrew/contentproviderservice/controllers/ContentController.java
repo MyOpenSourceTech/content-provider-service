@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping(path = "/content")
@@ -29,5 +29,15 @@ public class ContentController {
         Content content = contentService.save(new Content(fileName));
 
         return new ResponseEntity<Content>(content, HttpStatus.CREATED);
+    }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<Content> getFileMeta(@PathVariable String id) {
+        Optional<Content> content = contentService.getById(id);
+        if (content.isEmpty()) {
+            return new ResponseEntity<Content>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<Content>(content.get(), HttpStatus.OK);
+        }
     }
 }

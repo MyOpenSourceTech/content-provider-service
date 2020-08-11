@@ -6,6 +6,8 @@ import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ContentService {
     @Autowired
@@ -13,5 +15,9 @@ public class ContentService {
 
     public Content save(Content content) {
         return contentRepository.save(content);
+    }
+
+    public Optional<Content> getById(String id) {
+        return contentRepository.findById(id);
     }
 }
